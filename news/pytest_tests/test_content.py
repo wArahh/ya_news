@@ -28,16 +28,14 @@ def test_comment_sorting(comment, news, bulk_comments):
 
 
 @pytest.mark.django_db
-def test_post_comment_authorized(author_client, comment, news):
-    url = reverse('news:detail', kwargs={'pk': news.pk})
-    response = author_client.get(url)
+def test_post_comment_authorized(author_client, comment, news, detail_url):
+    response = author_client.get(detail_url)
     assert 'form' in response.context
 
 
 @pytest.mark.django_db
-def test_post_comment_not_authorized(client, comment, news):
-    url = reverse('news:detail', kwargs={'pk': news.pk})
-    response = client.get(url)
+def test_post_comment_not_authorized(client, comment, news, detail_url):
+    response = client.get(detail_url)
     assert 'form' not in response.context
 
 

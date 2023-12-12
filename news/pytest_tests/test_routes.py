@@ -16,9 +16,8 @@ def test_main(client, root):
 
 
 @pytest.mark.django_db
-def test_detail(client, news):
-    url = reverse('news:detail', args=(news.pk,))
-    response = client.get(url)
+def test_detail(client, news, detail_url):
+    response = client.get(detail_url)
     assert response.status_code == HTTPStatus.OK
 
 
@@ -37,8 +36,8 @@ def test_delete_edit(author_client, comment, root):
     'root',
     ('news:edit', 'news:delete'),
 )
-def test_edit_delete_comments(client, admin_client, comment, root):
-    url = reverse(root, args=(comment.pk,))
+def test_edit_delete_comments(client, admin_client, news, redirect_login_url, root):
+    url = reverse(root, args=(news.pk,))
     login_url = reverse('users:login')
     response = client.get(url)
     expected_url = f'{login_url}?next={url}'
