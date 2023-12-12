@@ -21,9 +21,7 @@ def test_news_sorting(client, news, bulk_news):
 
 
 @pytest.mark.django_db
-def test_comment_sorting(client, comment, news, bulk_comments):
-    url = reverse('news:detail', kwargs={'pk': news.pk})
-    client.get(url)
+def test_comment_sorting(comment, news, bulk_comments):
     all_dates = [comment.created for comment in bulk_comments]
     sorted_comments = sorted(all_dates, reverse=True)
     assert all_dates == sorted_comments
