@@ -1,12 +1,9 @@
+from datetime import datetime, timedelta
+
 import pytest
-
-from news.models import News, Comment
-
 from django.conf import settings
-
-from datetime import timedelta, datetime
-
 from django.urls import reverse
+from news.models import Comment, News
 
 
 @pytest.fixture
@@ -45,7 +42,8 @@ def comment(news, author):
 @pytest.fixture
 def bulk_news(author):
     return News.objects.bulk_create(
-        News(title=f'Новость {index}', text='Текст', date=datetime.now() - timedelta(days=index))
+        News(title=f'Новость {index}', text='Текст',
+             date=datetime.now() - timedelta(days=index))
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE)
     )
 
@@ -53,7 +51,8 @@ def bulk_news(author):
 @pytest.fixture
 def bulk_comments(author, news):
     return Comment.objects.bulk_create(
-        Comment(news=news, author=author, text='Текст', created=datetime.now() - timedelta(days=index))
+        Comment(news=news, author=author,
+                text='Текст', created=datetime.now() - timedelta(days=index))
         for index in range(settings.NEWS_COUNT_ON_HOME_PAGE)
     )
 

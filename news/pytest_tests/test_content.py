@@ -1,7 +1,4 @@
-from http import HTTPStatus
-from django.urls import reverse
 import pytest
-from pytest_django.asserts import assertRedirects
 from django.conf import settings
 
 
@@ -13,7 +10,7 @@ def test_pagination(client, bulk_news):
 
 
 @pytest.mark.django_db
-def test_news_sorting(client, news, bulk_news):
+def test_news_sorting(client, bulk_news):
     client.get('news:home')
     all_dates = [news.date for news in bulk_news]
     sorted_dates = sorted(all_dates, reverse=True)
@@ -21,25 +18,19 @@ def test_news_sorting(client, news, bulk_news):
 
 
 @pytest.mark.django_db
-def test_comment_sorting(comment, news, bulk_comments):
+def test_comment_sorting(bulk_comments):
     all_dates = [comment.created for comment in bulk_comments]
     sorted_comments = sorted(all_dates, reverse=True)
     assert all_dates == sorted_comments
 
 
 @pytest.mark.django_db
-def test_post_comment_authorized(author_client, comment, news, detail_url):
+def test_post_comment_authorized(author_client, detail_url):
     response = author_client.get(detail_url)
     assert 'form' in response.context
 
 
 @pytest.mark.django_db
-def test_post_comment_not_authorized(client, comment, news, detail_url):
+def test_post_comment_not_authorized(client, detail_url):
     response = client.get(detail_url)
     assert 'form' not in response.context
-
-
-
-
-
-
