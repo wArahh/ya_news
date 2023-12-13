@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from django.conf import settings
 from django.urls import reverse
+from django.utils import timezone
 from news.models import Comment, News
 
 
@@ -12,7 +13,7 @@ def author(django_user_model):
 
 
 @pytest.fixture
-def antowner(django_user_model):
+def antiowner(django_user_model):
     return django_user_model.objects.create(username='Пользователь')
 
 
@@ -44,17 +45,19 @@ def bulk_news(author):
     return News.objects.bulk_create(
         News(title=f'Новость {index}', text='Текст',
              date=datetime.now() - timedelta(days=index))
-        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE)
+        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
     )
 
 
 @pytest.fixture
-def bulk_comments(author, news):
-    return Comment.objects.bulk_create(
-        Comment(news=news, author=author,
-                text='Текст', created=datetime.now() - timedelta(days=index))
-        for index in range(settings.NEWS_COUNT_ON_HOME_PAGE)
-    )
+def comment_sort(author, news, comment):
+    now = timezone.now()
+    for index in range(2):
+        comment = Comment.objects.create(
+            news=news, author=author, text=f'Tекст {index}',
+        )
+        comment.created = now + timedelta(days=index)
+        comment.save()
 
 
 @pytest.fixture
